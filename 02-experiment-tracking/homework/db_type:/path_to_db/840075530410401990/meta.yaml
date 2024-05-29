@@ -1,0 +1,6 @@
+artifact_location: /workspaces/mlops-project/02-experiment-tracking/homework/db_type:/path_to_db/840075530410401990
+creation_time: 1716982859603
+experiment_id: '840075530410401990'
+last_update_time: 1716982859603
+lifecycle_stage: active
+name: nyctaxi-experiment-hw2
