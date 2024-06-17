@@ -1,25 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
-get_ipython().system('pip freeze | grep scikit-learn')
-
-
-
-
-get_ipython().system('python -V')
-
-
-
-
 import pickle
 import pandas as pd
 import numpy as np
 import os
-
-
+import sys
 
 
 with open('model.bin', 'rb') as f_in:
@@ -29,6 +12,8 @@ with open('model.bin', 'rb') as f_in:
 
 
 categorical = ['PULocationID', 'DOLocationID']
+year = 2023
+month = 4
 
 def read_data(filename):
     df = pd.read_parquet(filename)
@@ -37,23 +22,21 @@ def read_data(filename):
     df['duration'] = df.duration.dt.total_seconds() / 60
 
     df = df[(df.duration >= 1) & (df.duration <= 60)].copy()
-
-    df[categorical] = df[categorical].fillna(-1).astype('int').astype('str')
-    df['ride_id'] = f'{year:04d}/{month:02d}_' + df.index.astype('str')
-    
+    df[categorical] = df[categorical].fillna(-1).astype('int').astype('str')  
     return df
 
 
 
-df = read_data('https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-02.parquet')
-
-
-
+df = read_data('https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-04.parquet')
 
 dicts = df[categorical].to_dict(orient='records')
 X_val = dv.transform(dicts)
 y_pred = model.predict(X_val)
 
+
+y_pred
+
+print(np.mean(y_pred))
 
 
 std_dev = np.std(y_pred)
@@ -103,13 +86,6 @@ file_size_gb = file_size_bytes / (1024 ** 3)
 
 print(f'Size of the output.parquet file is: {file_size_mb:.2f} MB')
 
-
-# Now let's turn the notebook into a script.
-# 
-# Which command you need to execute for that?
-# 
-# jupyter nbconvert --to script starter.ipynb
-# 
 
 
 
