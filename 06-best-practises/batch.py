@@ -18,6 +18,17 @@ def read_data(filename, categorical):
     
     return df
 
+def prepare_data(df, categorical, min_minute=1, max_minute=60):
+    
+    df['duration'] = df.tpep_dropoff_datetime - df.tpep_pickup_datetime
+    df['duration'] = df.duration.dt.total_seconds() / 60
+
+    df = df[(df.duration >= min_minute) & (df.duration <= max_minute)].copy()
+
+    df[categorical] = df[categorical].fillna(-1).astype('int').astype('str')
+    
+    return df    
+
 def main(year, month):
     input_file = f'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{year:04d}-{month:02d}.parquet'
     output_directory = 'output'
@@ -29,6 +40,8 @@ def main(year, month):
     categorical = ['PULocationID', 'DOLocationID']
     
     df = read_data(input_file, categorical)
+    df = prepare_data(df, categorical)
+    
     df['ride_id'] = f'{year:04d}/{month:02d}_' + df.index.astype('str')
 
     dicts = df[categorical].to_dict(orient='records')
